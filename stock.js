@@ -1,6 +1,7 @@
 
    //global variable to store the result of the lookup api
    var companyData;
+   var autocompleteResult;
 
     $(document).ready(function() {
 
@@ -10,14 +11,39 @@
          //automatically call the showFavouriteList funtion
          showFavouriteList();
 
+         var nIntervId;
+
+          
+         function autoRefresh(){
+              var nIntervId = window.setInterval(updateItemsInLS,5000);
+         }
+
+
+          $(function() {
+              $("#toggleSwitch").change(function() {
+               if($(this).prop('checked')){
+                    autoRefresh();
+               }
+               else{
+                   clearInterval(nIntervId);
+               }
+            })
+          })
+
          //add the localstorage to favourite list
          function showFavouriteList(){
-          for (var i = 0; i < localStorage.length; i++){
-               var favouriteSymbol=localStorage.getItem(localStorage.key(i));
+            if(localStorage.getItem("storedSymbol")!==null){
+             var localArray=JSON.parse(localStorage.getItem("storedSymbol"));
+            for (var i = 0; i < localArray.length; i++){
+              console.log(localArray[i]);
+               var favouriteSymbol=localArray[i];
                addToFavourite(favouriteSymbol);
             }
+          }
          }
-      
+    
+
+
         //favourite list link to show details statistics
         $("#favouriteList").on('click', 'a', function(){
              var rowID_Symbol=$(this).closest('tr').attr('id');
@@ -30,13 +56,20 @@
              $("#resultpadslide").carousel(1);
           })
 
-        //manually refresh the data of the favourtielist
-        $("#refreshButton").click(function(){
-             for (var i = 0; i < localStorage.length; i++){
-               var favouriteSymbol=localStorage.getItem(localStorage.key(i));
+
+        function updateItemsInLS(){
+          
+            if(localStorage.getItem("storedSymbol")!==null){
+             var localArray=JSON.parse(localStorage.getItem("storedSymbol"));
+            for (var i = 0; i < localArray.length; i++){
+               var favouriteSymbol=localArray[i];
                updateFavouriteList(favouriteSymbol);
             }
-         });
+          }
+         }
+
+        //manually refresh the data of the favourtielist
+        $("#refreshButton").click(updateItemsInLS);
 
         //update favourite list
         function updateFavouriteList(companySymbol){
@@ -46,7 +79,7 @@
                 data:{symbol:companySymbol},
                 dataType:"json",
                 success:function(data){
-                    //console.log(data);
+                    console.log(data);
                     updateFavouriteRow(data);  
                 }
                 
@@ -98,18 +131,20 @@
                 success: function(data){
                   
                   var lab_value=[];
+                  autocompleteResult=data;
                   for (var i = 0; i < data.length; i++) {
                     var item={};
                     item["label"]=data[i].Symbol+"-"+data[i].Name+"("+data[i].Exchange+")";
                     item["value"]=data[i].Symbol;
                     lab_value.push(item);
                   };
+
                   response(lab_value);
                    document.getElementById("errormessage").innerHTML="";   
                 },
                 error: function(){
                   response();
-                  document.getElementById("errormessage").innerHTML="Select a valid entry"; 
+                  //document.getElementById("errormessage").innerHTML="Select a valid entry"; 
                    //貌似不行！！这个应该放在quote的结果里 $('#companySymbol').append('<div class="help-block">' + "Select a valid entry" + '</div>');
                 }
               });
@@ -124,18 +159,32 @@
       /*********** first tab functions(stock table+yahoo chart) ************/
 
       $("#searchForm").submit(function(event){
-            var companySymbol=$("#companySymbol").val();
-            //request the stockdetail to show the table
-            ajaxStockDetail(companySymbol);
-            //request the news and show the newsfeed
-            ajaxStockNews(companySymbol);
-            
-
-            var upperCompanySymbol=companySymbol.toUpperCase();
-            var queryArray=JSON.stringify(getInput(upperCompanySymbol));
-            //request the stockchart data and show the historicalchart
-            ajaxStockCharts(queryArray);
             event.preventDefault();
+            var i;
+            var tmp=0;
+          for (i = 0; i < autocompleteResult.length; i++) {
+              if(autocompleteResult[i].Symbol==$("#companySymbol").val()){
+                var tmp=1;
+                  var companySymbol=$("#companySymbol").val();
+                  //request the stockdetail to show the table
+                  ajaxStockDetail(companySymbol);
+                  //request the news and show the newsfeed
+                  ajaxStockNews(companySymbol);
+                  
+
+                  var upperCompanySymbol=companySymbol.toUpperCase();
+                  var queryArray=JSON.stringify(getInput(upperCompanySymbol));
+                  //request the stockchart data and show the historicalchart
+                  ajaxStockCharts(queryArray);
+                  break;
+                }     
+              }
+              if(tmp==0){
+                 document.getElementById("errormessage").innerHTML="Select a valid entry"; 
+                 //准备换哈
+              }
+          
+           
         });
 
       //ajax call which use to retrieve the data of the stock details
@@ -157,12 +206,16 @@
                       buildStockTable(data);
                       companyData=data;
                      $("#daily_stock_chart").html("<img src="+"http://chart.finance.yahoo.com/t?s="+companySymbol+"&lang=en-US&width=400&height=300 style='min-width:100%; height:auto;'>");
-                     if(localStorage.getItem(data.Symbol)===null){
+                     var localArray=localStorage.getItem("storedSymbol");
+                     if(localStorage.getItem("storedSymbol")!==null){
+                       var localArray=JSON.parse(localStorage.getItem("storedSymbol"));
+                     if($.inArray(companySymbol,localArray)==-1){
                         $("#starButton").css("color","white"); 
                       }
                       else{
                         $("#starButton").css("color","gold");
                       }
+                    }
                     }   
                 }   
             })
@@ -253,16 +306,31 @@
           //click the favouriteButton and add to the favourite
         $("#favouriteButton").click(function(){
             var SymbolToBeAdd=companyData.Symbol;
-            if(localStorage.getItem(SymbolToBeAdd)===null){
+            var localArray=[];
+            if(localStorage.getItem("storedSymbol")===null){
               $("#starButton").css("color","gold");
-               localStorage.setItem(SymbolToBeAdd,SymbolToBeAdd);
+               localArray.push(SymbolToBeAdd);
+               localStorage.setItem("storedSymbol",JSON.stringify(localArray));
+               addToFavourite(SymbolToBeAdd);
+            }
+            else{
+            
+              localArray=JSON.parse(localStorage.getItem("storedSymbol"));
+
+            if($.inArray(SymbolToBeAdd,localArray)==-1){
+              $("#starButton").css("color","gold");
+               localArray.push(SymbolToBeAdd);
+               localStorage.setItem("storedSymbol",JSON.stringify(localArray));
                addToFavourite(SymbolToBeAdd);
             }
             else{
                 $("#starButton").css("color","white");
                  $("#"+SymbolToBeAdd).remove();
-                localStorage.removeItem(SymbolToBeAdd);
+                 var index=localArray.indexOf(SymbolToBeAdd);
+                 localArray.splice(index,1);
+                localStorage.setItem("storedSymbol",JSON.stringify(localArray));
             }
+          }
              
           });
 
@@ -322,9 +390,11 @@
           //favourite button sometimes act like a trash button
           $("#favouriteList").on('click', 'button', function(){
              var rowID_Symbol=$(this).closest('tr').attr('id');
-             localStorage.removeItem(rowID_Symbol);
+              localArray=JSON.parse(localStorage.getItem("storedSymbol"));
+             var index=localArray.indexOf(rowID_Symbol);
+                 localArray.splice(index,1);
+             localStorage.setItem("storedSymbol",JSON.stringify(localArray));
              $(this).closest('tr').remove();
-            
           })
 
      /*********** third tab functions(historical chart) ************/  
@@ -529,7 +599,8 @@
          })
     
      
-    
+   // document.ready close  
+});  
 
 
      /*javascript function that reset the form and the inner html of the search result， 
@@ -551,5 +622,3 @@
             }
         }
    
-// document.ready close  
-}); 

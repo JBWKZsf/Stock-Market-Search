@@ -1,39 +1,3 @@
-/*fieldset{
-    margin: 100px auto 0 auto;
-    width: 400px;
-    
-    background-color: rgb(242,242,242);
-    border: 1px solid rgb(203,203,203);
-}
-
-
-
-#SS{
-    font-family: serif;
-    font-style: oblique;
-    text-align: center;
-    font-size: 30px;
-    padding: 0px;
-    margin: 0px;
-    font-weight: bold;
-}
-
-.searchForm{
-    border: 1px solid red;
-}
-
-
-
-a{ 
- color: blue;
- text-decoration: underline;
- cursor: pointer;
-}
-
-#power{
-    margin-left: 110px;
-}*/
-
 body{
 	background-color: rgb(26,64,98);
 }
