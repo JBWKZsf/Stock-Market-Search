@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- IE Edge Meta Tag -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <!-- Viewport -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+  
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css">
+  <link rel="stylesheet" href="styles.css">
+
+  <title>Stock Search</title>
+  
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+  <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    
+  <script src="https://code.highcharts.com/stock/highstock.js"></script>
+  <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+  <script src="moment.js"></script>
+  <script src="stock.js"></script>
+
+</head>
+   
+   <body>
+       <div id="fb-root"></div>
+        <script>
+              window.fbAsyncInit = function() {
+                FB.init({
+                  appId      : '347797988677374',
+                  xfbml      : true,
+                  version    : 'v2.5'
+                });
+              };
+
+              (function(d, s, id){
+                 var js, fjs = d.getElementsByTagName(s)[0];
+                 if (d.getElementById(id)) {return;}
+                 js = d.createElement(s); js.id = id;
+                 js.src = "//connect.facebook.net/en_US/sdk.js";
+                 fjs.parentNode.insertBefore(js, fjs);
+               }(document, 'script', 'facebook-jssdk'));
+        </script>
+        <script>
+            $(document).ready(function() {
+              
+              $("#fbShareButton").click(function(e){
+                e.preventDefault();
+                FB.ui(
+                {
+                method: 'feed',
+                name: 'Current Stock Price of '+companyData.Name+" is "+companyData.LastPrice,
+                link: 'http://www.kickstarter.com',
+                picture: "http://chart.finance.yahoo.com/t?s="+companyData.Symbol+"&lang=en-US&width=400&height=300",
+                caption: "LAST TRADE PRICE:"+companyData.LastPrice+", CHANGE:"+companyData.Change+"("+companyData.ChangePercent+"%)",
+                description: 'Stock Information of '+companyData.Name+" ("+companyData.Symbol+")",
+                message: ''
+                },
+                function(response){
+                    if (response && response.post_id) {
+                           //alert('Post was published.');
+                           alert('Posted Successfully');
+                           //window.location.href = "http://redirect-user-here.com";
+                         } else {
+                           alert("Not Posted");
+
+                         }
+                });
+                });
+            });
+         </script>
+  
+    <!-- search form on the web page-->
+    <div class="container">
+      <div class="col-sm-12">
+         <div class="searchpad">
+          
+           <form id="searchForm" class="form-horizontal" method="post">
+             <br>
+             <p id="SS" class="col-sm-12">Stock Search</p>
+        
+             <label class="col-sm-3 control-label" for="companySymbol" >Enter the stock name or symbol:<span style="color:red;">*</span></label>
+             <div class="col-sm-5">
+               <input class="form-control" id="companySymbol" type="text"  name="company" oninvalid="InvalidMsg(this);" autofocus required="required" placeholder="Apple or AAPL">  
+             </div>
+             
+             <div class="col-sm-4">
+               <button type="submit" id="quotebutton" class="btn btn-primary"><span class="glyphicon glyphicon-search"></span> Get Quote</button>
+               <button type="reset" name="clear" value="Clear" onclick="ResetPage(this.form)" class="btn btn-default"><span class="glyphicon glyphicon-refresh"></span> Clear</button>
+             </div>
+       
+             <div class="form-group">
+                 <div class="col-sm-5 col-sm-offset-3">
+                    <p id="errormessage" style="color:red"></p>
+                 </div>
+
+                 <div class="col-sm-4">
+                   <label for="power">Powered by: </label><a id="power" href="https://www.markit.com/product/markit-on-demand"><img src="mod-logo.png" height="30" width="200"></a>
+                 </div>
+             </div> 
+            </form>
+
+          </div>
+    <hr>
+            <div class="carousel slide" id="resultpadslide">
+                  <div class="carousel-inner">
+                        <!--  first carousel page -->
+                        <div class="item active"id="favouritepad">
+                            <div id="bottompanel" class="panel panel-default">
+                                <div class="panel-heading clearfix">
+                                 <b>Favortite List</b>
+                                  <div class="pull-right">
+                                      <label>Auto Refresh <input class="btn-small" type="checkbox" data-toggle="toggle" ></label>
+                                      <button id="refreshButton" class="btn btn-default"><span class="glyphicon glyphicon-refresh"></span></button>
+                                      <button id="nextslide" style="cursor:not-allowed" class="btn btn-default" disabled><span class="glyphicon glyphicon-chevron-right"></span></button>
+                                  </div>
+                                </div>
+                                <div class="panel-body">
+                                  <div class="table-responsive">
+                                    <table class="table table-striped" id="favouriteList">
+                                        <tr>
+                                          <th>Symbol</th>
+                                          <th>Company Name</th>
+                                          <th>Stock Price</th>
+                                          <th>Change(Change Percent)</th>
+                                          <th>Market Cap</th>
+                                          <th></th>
+                                        </tr>
+                                    </table>
+                                  </div>
+                                </div>
+                            </div>    
+                       </div>
+                        
+                        <!--  second carousel page -->
+                        <div class="item" id="detailspad">
+                             <div id="bottompanel" class="panel panel-default">
+                                <div class="panel-heading text-center clearfix"><button id="prevslide" class="btn btn-default pull-left"><span class="glyphicon glyphicon-chevron-left"></span></button><span>Stock Details</span>
+                                </div>
+                               
+                             <div class="panel-body">
+                          <div id="tabarea">
+
+                            <!-- Nav tabs -->
+                            <ul class="nav nav-pills" role="tablist">
+                                <li role="presentation" class="active"><a href="#currentstock" aria-controls="currentstock" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-dashboard"></span> Current Stock</a></li>
+                              <li role="presentation"><a href="#historicalcharts" aria-controls="historicalcharts" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-stats"></span> Historical Charts</a></li>
+                                <li role="presentation"><a href="#newsfeed" aria-controls="newsfeed" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-link"></span> New Feeds</a></li>
+                            </ul>
+
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                          <div role="tabpanel" class="tab-pane active" id="currentstock">
+                              <hr>
+                              
+                              <div style="float:right">
+                                 <img  id="fbShareButton" src="1459164023_facebook.ico" width="40" height="40">
+                                 <button id="favouriteButton" class="btn btn-default"><span id="starButton" class="glyphicon glyphicon-star" style="color:white; font-size:23px; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;"></span></button>
+                              </div>
+                              
+                              <div class="col-sm-6" id="stockTable">
+                                <!-- The stock details talbe will showed here -->
+                              </div>
+                              <div class="col-sm-6" id="daily_stock_chart">
+                                <!-- Yahoo daily charts will showed here -->
+                              </div>
+                          </div>
+    
+                          <div role="tabpanel" class="tab-pane" id="historicalcharts"><hr>
+                              <div id="interactive_charts">
+                                <!-- The historicalcharts will showed here -->
+                              </div>
+                          </div>
+
+                          <div role="tabpanel" class="tab-pane" id="newsfeed"><hr>
+                               <div id="news">
+                                <!-- The news feed will showed here -->
+                               </div>
+                          </div>
+                        </div><!-- tab content  -->
+
+                      </div><!-- id=tabarea -->
+                          </div><!-- panel body -->
+                       </div><!-- bottompanel -->
+                    
+                  </div><!-- second carousel page -->
+               </div><!-- carousel inner -->
+            </div><!-- carousel slide -->
+     </div><!-- col-sm-12 -->
+  </div> <!-- container -->
+  
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+ </body>
+</html>
