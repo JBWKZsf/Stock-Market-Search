@@ -281,7 +281,6 @@
 
             
            $("#stockTable").append("<table id='stockDetailTable' class='table table-striped'></table>");
-           $("#stockDetailTable").prepend("<p>Stock details</p>");
            $("#stockDetailTable").append("<tr><td style='font-weight:bold';>"+"Name"+"</td><td>"+data.Name+"</td></tr>");
            $("#stockDetailTable").append("<tr><td style='font-weight:bold';>"+"Symbol"+"</td><td>"+data.Symbol+"</td></tr>");
            $("#stockDetailTable").append("<tr><td style='font-weight:bold';>"+"Last Price"+"</td><td>"+data.LastPrice+"</td></tr>");
