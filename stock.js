@@ -127,7 +127,7 @@
              //        console.log( data.time ); // 2pm
              //      }, "json");
            $.ajax({
-                type:"POST",
+                type:"GET",
                 url: "stockdata.php",
                 data:{symbol:request.term},
                 dataType:"json",
@@ -183,7 +183,8 @@
                 }     
               }
               if(tmp==0){
-                 document.getElementById("errormessage").innerHTML="Select a valid entry"; 
+                $("#companySymbol").append("<p class='help-block with-errors'>" + "Select a valid entry" + "</p>");
+                 //document.getElementById("errormessage").innerHTML="Select a valid entry"; 
                  //准备换哈
               }
           
