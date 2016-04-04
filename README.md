@@ -53,4 +53,4 @@ This website use serveral APIS:
    [https://developers.facebook.com/docs/javascript](https://developers.facebook.com/docs/javascript)
 
    
-#####Special thank to these imformation offered.
+#####Special thank to these information offered.
