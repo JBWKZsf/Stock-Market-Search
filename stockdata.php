@@ -1,8 +1,8 @@
 <?php
-        if(isset($_POST["symbol"])){
+        if(isset($_GET["symbol"])){
         
         //construct the url of xml file
-        $json_url="http://dev.markitondemand.com/MODApis/Api/v2/Lookup/json?input=".$_POST["symbol"];
+        $json_url="http://dev.markitondemand.com/MODApis/Api/v2/Lookup/json?input=".$_GET["symbol"];
            
         $json_content=file_get_contents($json_url);
       
@@ -14,7 +14,7 @@
 <?php
          
          
-          //check if the value of symbol was post
+        
           if(isset($_GET["detailSymbol"])){
 
               $json_url="http://dev.markitondemand.com/MODApis/Api/v2/Quote/json?symbol=".$_GET["detailSymbol"];
