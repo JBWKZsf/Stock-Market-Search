@@ -12,7 +12,7 @@
          showFavouriteList();
 
          var nIntervId;
-
+        
           
          function autoRefresh(){
               var nIntervId = window.setInterval(updateItemsInLS,5000);
@@ -37,7 +37,10 @@
             for (var i = 0; i < localArray.length; i++){
               console.log(localArray[i]);
                var favouriteSymbol=localArray[i];
-               addToFavourite(favouriteSymbol);
+               console.log(favouriteSymbol);
+                $("#favouriteList").append("<tr id='"+favouriteSymbol+"'><td>"+"<a>"+favouriteSymbol+"</a>"+"</td><td></td><td></td><td></td><td></td><td>"
+                                            +"<button class='btn btn-default'><span class='glyphicon glyphicon-trash'></span></button>"+"</td></tr>");
+              updateFavouriteList(favouriteSymbol);
             }
           }
          }
@@ -76,7 +79,7 @@
             $.ajax({
                 type:"GET",
                 url:"stockdata.php",
-                data:{symbol:companySymbol},
+                data:{detailSymbol:companySymbol},
                 dataType:"json",
                 success:function(data){
                     console.log(data);
@@ -205,7 +208,7 @@
                      $("#resultpadslide").carousel(1);
                       buildStockTable(data);
                       companyData=data;
-                     $("#daily_stock_chart").html("<img src="+"http://chart.finance.yahoo.com/t?s="+companySymbol+"&lang=en-US&width=400&height=300 style='min-width:100%; height:auto;'>");
+                     $("#daily_stock_chart").html("<img src="+"http://chart.finance.yahoo.com/t?s="+companySymbol+"&lang=en-US&width=400&height=300 style='width:100%; height:auto;'>");
                      var localArray=localStorage.getItem("storedSymbol");
                      if(localStorage.getItem("storedSymbol")!==null){
                        var localArray=JSON.parse(localStorage.getItem("storedSymbol"));
