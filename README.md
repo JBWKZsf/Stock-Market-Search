@@ -27,9 +27,9 @@ This website will give you the latest stock imformation of the company you want 
 ##DEMO
 You can view the demo on (Amazon Web Servers): [http://jbwkzsf-env.us-west-2.elasticbeanstalk.com/](http://jbwkzsf-env.us-west-2.elasticbeanstalk.com/)
 
-or (Use Google app engine and webpage is on USC cs-server):[http://www-scf.usc.edu/~zhonghaw/HW8/index.html](http://www-scf.usc.edu/~zhonghaw/HW8/index.html)
+or (Use Google Cloud Platform and webpage is on USC cs-server):[http://www-scf.usc.edu/~zhonghaw/HW8/index.html](http://www-scf.usc.edu/~zhonghaw/HW8/index.html)
 
-Note:Google app engine is faster than AWS. LOL.
+Note:Google Cloud Platform is faster than AWS.  lol.  My code on github(stock.js) is based on Google Cloud Platform.
 ##APIS
 This website use serveral APIS:
 
