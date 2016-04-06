@@ -43,7 +43,7 @@
 
 	$request = "https://api.datamarket.azure.com/Bing/Search/v1/News?Query=".urlencode("'".$_GET["newsSymbol"]."'")."&".urlencode("$")."format=json";
 
-
+  
     $response = file_get_contents($request,0,$context);
 
     echo $response;
