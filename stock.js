@@ -15,7 +15,7 @@
         
           
          function autoRefresh(){
-              var nIntervId = window.setInterval(updateItemsInLS,5000);
+               nIntervId = window.setInterval(updateItemsInLS,5000);
          }
 
 
@@ -35,9 +35,9 @@
             if(localStorage.getItem("storedSymbol")!==null){
              var localArray=JSON.parse(localStorage.getItem("storedSymbol"));
             for (var i = 0; i < localArray.length; i++){
-              console.log(localArray[i]);
+              //console.log(localArray[i]);
                var favouriteSymbol=localArray[i];
-               console.log(favouriteSymbol);
+              // console.log(favouriteSymbol);
                 $("#favouriteList").append("<tr id='"+favouriteSymbol+"'><td>"+"<a>"+favouriteSymbol+"</a>"+"</td><td></td><td></td><td></td><td></td><td>"
                                             +"<button class='btn btn-default'><span class='glyphicon glyphicon-trash'></span></button>"+"</td></tr>");
               updateFavouriteList(favouriteSymbol);
@@ -82,7 +82,7 @@
                 data:{detailSymbol:companySymbol},
                 dataType:"json",
                 success:function(data){
-                    console.log(data);
+                    //console.log(data);
                     updateFavouriteRow(data);  
                 }
                 
@@ -183,8 +183,8 @@
                 }     
               }
               if(tmp==0){
-                $("#companySymbol").append("<p class='help-block with-errors'>" + "Select a valid entry" + "</p>");
-                 //document.getElementById("errormessage").innerHTML="Select a valid entry"; 
+                // $("#companySymbol").append("<p class='help-block with-errors'>" + "Select a valid entry" + "</p>");
+                 document.getElementById("errormessage").innerHTML="Select a valid entry"; 
                  //准备换哈
               }
           
@@ -433,7 +433,7 @@
         function ajaxStockCharts(queryArray){
           $.ajax({
                 type:"GET",
-                url:"stockdata.php",
+                url:"http://tribal-map-127218.appspot.com/",
                 data:{chartSymbol:queryArray},
                 dataType:"json",
                 success:function(json){
@@ -549,7 +549,7 @@
                   },
 
                   title: {
-                      text: $("#companySymbol").val().toUpperCase() + ' Stock Value'
+                      text: companyData.Symbol + ' Stock Value'
                   },
                   
                   yAxis: {
@@ -561,7 +561,7 @@
 
                   series: [{
                       type: 'area',
-                      name: $("#companySymbol").val().toUpperCase(),
+                      name: companyData.Symbol,
                       data: ohlc_c,
                       threshold:null,
                       tooltip:{
@@ -583,10 +583,16 @@
                      
                       }]
               });
+           
+           
         }
         
-  
         
+        // $("#highchart").click(function(){
+        //   setTimeout(function(){
+        //     $("#interactive_charts").highcharts().reflow();
+        //   },10)
+        // })
     
          //slide control
          $("#nextslide").click(function(){
@@ -617,11 +623,3 @@
           document.getElementById("errormessage").innerHTML="";
        }
      
-     //customize the invalid message of the required attribute of input in the form
-        function InvalidMsg(textbox){
-            if(textbox.value == '') {
-                  textbox.setCustomValidity("Please enter Name or Symbol");
-                return true;
-            }
-        }
-   
