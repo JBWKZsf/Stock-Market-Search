@@ -22,7 +22,7 @@ This website will give you the latest stock imformation of the company you want 
 1.`index.html` is the stock web page. 
 
 
-2.Except the`index.html``stcok.js``stockdata.php``styles.css``moment.js(powered by moment.js)`, thre rest files are the pictures and logo we use in the website.
+2.Except the`index.html``stcok.js``stockdata.php``styles.css``moment.js(powered by moment.js)`, the rest files are the pictures and logo we use in the website.
 
 ##DEMO
 You can view the demo on : [http://jbwkzsf-env.us-west-2.elasticbeanstalk.com/](http://jbwkzsf-env.us-west-2.elasticbeanstalk.com/)
@@ -53,4 +53,4 @@ This website use serveral APIS:
    [https://developers.facebook.com/docs/javascript](https://developers.facebook.com/docs/javascript)
 
    
-#####Special thank to these imformation offered.
+#####Special thank to these information offered.
