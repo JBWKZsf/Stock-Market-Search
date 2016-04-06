@@ -1,9 +1,17 @@
-@media screen and (max-width: 480px){
+@media screen and (max-width: 570px){
   .mobileHidden{
       visibility:hidden;
+      display: none;
    }
 }
  
+@media screen and (max-width: 510px){
+  #hiddentext{
+      visibility:hidden;
+      display: none;
+   }
+}
+
 body{
 	background-color: rgb(26,64,98);
 }
@@ -14,10 +22,13 @@ body{
     padding: 10px;
     margin: 0px;
 }
-
-#companySymbol{
-    margin-bottom: 10px;
+#errormessage{
+  color: red;
+   margin-bottom: 10px;
 }
+/*#companySymbol{
+    margin-bottom: 10px;
+}*/
 .searchpad{
     margin-top: 20px;
     background-color: white;
@@ -25,6 +36,14 @@ body{
     -webkit-border-radius:10px;
     -moz-border-radius:10px;
     border-radius: 10px;
+}
+
+#searchForm{
+  margin-bottom: 10px;
+}
+
+#formbutton{
+  margin-bottom:10px; 
 }
 
 #favouritepad{
@@ -82,6 +101,7 @@ body{
 #favouriteList a{
     cursor: pointer;
 }
+
 
 
 
