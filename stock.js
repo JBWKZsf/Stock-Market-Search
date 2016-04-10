@@ -1,6 +1,7 @@
 
-   //global variable to store the result of the lookup api
+   //global variable to store the result of the stock detail api
    var companyData;
+   //global variable to store the result of the autocomplete(use to validate the user input)
    var autocompleteResult;
 
     $(document).ready(function() {
@@ -13,7 +14,7 @@
 
          var nIntervId;
         
-          
+        //auto refresh
          function autoRefresh(){
                nIntervId = window.setInterval(updateItemsInLS,5000);
          }
@@ -30,14 +31,15 @@
             })
           })
 
+
          //add the localstorage to favourite list
          function showFavouriteList(){
             if(localStorage.getItem("storedSymbol")!==null){
              var localArray=JSON.parse(localStorage.getItem("storedSymbol"));
             for (var i = 0; i < localArray.length; i++){
-              //console.log(localArray[i]);
+             
                var favouriteSymbol=localArray[i];
-              // console.log(favouriteSymbol);
+             
                 $("#favouriteList").append("<tr id='"+favouriteSymbol+"'><td>"+"<a>"+favouriteSymbol+"</a>"+"</td><td></td><td></td><td></td><td></td><td>"
                                             +"<button class='btn btn-default'><span class='glyphicon glyphicon-trash'></span></button>"+"</td></tr>");
               updateFavouriteList(favouriteSymbol);
@@ -59,7 +61,7 @@
              $("#resultpadslide").carousel(1);
           })
 
-
+        //update the items in localstorage
         function updateItemsInLS(){
           
             if(localStorage.getItem("storedSymbol")!==null){
@@ -70,6 +72,7 @@
             }
           }
          }
+
 
         //manually refresh the data of the favourtielist
         $("#refreshButton").click(updateItemsInLS);
@@ -148,7 +151,6 @@
                 error: function(){
                   response();
                   //document.getElementById("errormessage").innerHTML="Select a valid entry"; 
-                   //貌似不行！！这个应该放在quote的结果里 $('#companySymbol').append('<div class="help-block">' + "Select a valid entry" + '</div>');
                 }
               });
             },
@@ -200,7 +202,6 @@
                 dataType:"json",
                 success:function(data){
                     if (data.Status!="SUCCESS") {
-                       //这里应该放那个select valid entry那个东西
                     }
                     else{
                      $("#stockTable").empty();
@@ -226,6 +227,8 @@
         }
 
 
+
+        //change the data to specific format
         function adjustDataFormat(data){
             data.Change=data.Change.toFixed(2);
             data.ChangePercent=data.ChangePercent.toFixed(2);
@@ -251,7 +254,7 @@
         }
 
 
-        
+        //build the table in first tab
         function buildStockTable(data){
             var ChangeColor;
             var YTDChangeColor;
@@ -310,29 +313,31 @@
         $("#favouriteButton").click(function(){
             var SymbolToBeAdd=companyData.Symbol;
             var localArray=[];
+            //if not object stored in local storage
             if(localStorage.getItem("storedSymbol")===null){
               $("#starButton").css("color","gold");
                localArray.push(SymbolToBeAdd);
                localStorage.setItem("storedSymbol",JSON.stringify(localArray));
                addToFavourite(SymbolToBeAdd);
             }
-            else{
-            
-              localArray=JSON.parse(localStorage.getItem("storedSymbol"));
+            else{//in there exist object in local storage
 
-            if($.inArray(SymbolToBeAdd,localArray)==-1){
-              $("#starButton").css("color","gold");
-               localArray.push(SymbolToBeAdd);
-               localStorage.setItem("storedSymbol",JSON.stringify(localArray));
-               addToFavourite(SymbolToBeAdd);
-            }
-            else{
-                $("#starButton").css("color","white");
-                 $("#"+SymbolToBeAdd).remove();
-                 var index=localArray.indexOf(SymbolToBeAdd);
-                 localArray.splice(index,1);
-                localStorage.setItem("storedSymbol",JSON.stringify(localArray));
-            }
+            
+                  localArray=JSON.parse(localStorage.getItem("storedSymbol"));
+
+                if($.inArray(SymbolToBeAdd,localArray)==-1){
+                  $("#starButton").css("color","gold");
+                   localArray.push(SymbolToBeAdd);
+                   localStorage.setItem("storedSymbol",JSON.stringify(localArray));
+                   addToFavourite(SymbolToBeAdd);
+                }
+                else{
+                    $("#starButton").css("color","white");
+                     $("#"+SymbolToBeAdd).remove();
+                     var index=localArray.indexOf(SymbolToBeAdd);
+                     localArray.splice(index,1);
+                    localStorage.setItem("storedSymbol",JSON.stringify(localArray));
+                }
           }
              
           });
@@ -400,7 +405,7 @@
              $(this).closest('tr').remove();
           })
 
-     /*********** third tab functions(historical chart) ************/  
+     /*********** third tab functions(news) ************/  
           function ajaxStockNews(companySymbol){
            $.ajax({
                 type:"GET",
@@ -588,11 +593,6 @@
         }
         
         
-        // $("#highchart").click(function(){
-        //   setTimeout(function(){
-        //     $("#interactive_charts").highcharts().reflow();
-        //   },10)
-        // })
     
          //slide control
          $("#nextslide").click(function(){
